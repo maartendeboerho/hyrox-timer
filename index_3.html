@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="nl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HYROX Timer">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>HYROX Timer</title>
+<style>
+:root{--bg:#fff;--fg:#000;--mut:#3d3d3d;--card:#f2f2f2;--line:#b5b5b5;--btn:#e2e2e2;--go:#fff000;--gofg:#000;--ye:#fff000;--warn:#9a3412;--warnbg:#ffedd5;--bad:#b91c1c;--badbg:#fee2e2;--good:#15803d;--pri:#000;--prifg:#fff000;--bd:#000}
+[data-theme=dark]{--bg:#000;--fg:#fff;--mut:#b8b8b8;--card:#131313;--line:#3a3a3a;--btn:#202020;--go:#fff000;--gofg:#000;--ye:#fff000;--warn:#fdba74;--warnbg:#431c05;--bad:#fca5a5;--badbg:#450a0a;--good:#4ade80;--pri:#fff000;--prifg:#000;--bd:#fff000}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+body{min-width:360px;overflow-x:hidden}
+button,.btn{font:inherit;color:var(--fg);border:2px solid var(--line);border-radius:2px;background:var(--btn);min-height:52px;padding:0 12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:14px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;justify-content:center;text-align:center;cursor:pointer}
+button:active,.btn:active{filter:brightness(.85)}
+button:disabled{opacity:.3}
+.pri{background:var(--pri);color:var(--prifg);border-color:var(--pri)}
+.wrap{max-width:560px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+h2{font-size:14px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.12em;color:var(--mut)}
+.top{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:4px solid var(--ye)}
+.top .tt{flex:1;font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:.06em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .tot{font-weight:900;font-size:20px;font-variant-numeric:tabular-nums;color:var(--bd)}
+.top .tot small{font-size:13px;color:var(--mut);font-weight:700}
+.thm{min-height:40px;padding:0 10px}
+.sub2{color:var(--mut);font-weight:800;margin:8px 0 6px;text-transform:uppercase;letter-spacing:.06em;font-size:13px}
+.rules{background:var(--ye);color:#000;border-radius:2px;padding:6px 10px;font-weight:800;font-size:14px;margin:0 0 8px}
+.train{display:flex;flex-direction:column;min-height:100dvh}
+.card{border-radius:2px;overflow:hidden;background:var(--card);border:2px solid var(--line)}
+.chead{background:var(--ye);color:#000;display:flex;align-items:center;gap:10px;padding:8px 12px}
+.chead .ic{width:48px;height:48px;padding:4px;color:#000;flex:none}
+.ico{width:100%;height:100%;display:block}
+.ico-sm{width:16px;height:16px;vertical-align:-3px;margin-right:5px}
+.k{display:block;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);line-height:1.2}
+.chead .lab{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.chead .nm{font-size:21px;font-weight:900;line-height:1.15;text-transform:uppercase}
+.cbody{padding:8px 12px 10px}
+.l1{font-size:clamp(30px,10vw,44px);font-weight:900;line-height:1.1}
+.l2{font-size:clamp(20px,6vw,26px);font-weight:800;margin-top:2px}
+.l3{font-size:19px;font-weight:700;margin-top:2px}
+.note{margin-top:8px;padding:8px 10px;border-left:6px solid var(--ye);background:var(--bg);font-size:16px;font-weight:600}
+.tblk{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:10px;padding:8px 12px;border:2px solid var(--line);border-radius:2px}
+.tblk.warn{background:var(--warnbg);border-color:var(--warn);color:var(--warn)}
+.tblk.bad{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.cap{font-size:12px;font-weight:900;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.tblk.warn .cap,.tblk.bad .cap{color:inherit}
+.big{font-size:clamp(56px,19vw,92px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.big2{font-size:clamp(30px,10vw,46px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;text-align:right}
+.bar{height:8px;background:var(--btn);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ye)}
+[data-theme=light] .bar i{background:#000}
+.tblk.warn+.bar i{background:var(--warn)}.tblk.bad+.bar i{background:var(--bad)}
+.next{margin:10px 0 6px;color:var(--mut);font-weight:700;font-size:15px}
+.next b{color:var(--fg)}
+.grow{flex:1;min-height:6px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.klaar{width:100%;min-height:clamp(110px,22vh,200px);font-size:clamp(40px,13vw,64px);font-weight:900;letter-spacing:.06em;background:var(--go);color:var(--gofg);border:3px solid #000;border-radius:2px}
+[data-theme=dark] .klaar{border-color:var(--go)}
+.klaar.rest{font-size:clamp(26px,8vw,38px)}
+details{margin:6px 0;border:2px solid var(--line);border-radius:2px;padding:6px 10px}
+summary{font-weight:800;min-height:38px;display:flex;align-items:center;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;font-size:14px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:2px solid var(--line);border-radius:2px;padding:10px;margin:4px 0}
+input:focus,textarea:focus{outline:3px solid var(--ye);border-color:var(--ye)}
+textarea{min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+.err{background:var(--badbg);color:var(--bad);border-left:6px solid var(--bad);padding:8px 12px;margin:8px 0;font-size:14px;font-weight:600}
+.err code{display:block;font-family:ui-monospace,Menlo,monospace;color:var(--fg);font-weight:400;word-break:break-word;margin-top:2px}
+.ov{list-style:none;margin:0;padding:0}
+.ov li{display:flex;gap:10px;padding:8px 10px;margin:6px 0;background:var(--card);border-left:8px solid var(--ye)}
+.ov .ic{width:40px;height:40px;padding:5px;background:var(--ye);color:#000;flex:none}
+.sub{color:var(--mut);font-size:14px;word-break:break-word}
+.hint{color:var(--mut);font-size:13px}
+.plan{background:var(--ye);color:#000;padding:10px 12px;margin:8px 0;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.plan .cap{color:#000}
+.plan b{font-size:clamp(34px,11vw,48px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.plan .sub{color:#000;font-weight:700;text-align:right;font-size:13px}
+table.res{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px}
+.res th{text-align:left;font-size:12px;color:var(--mut);padding:4px 3px;border-bottom:3px solid var(--ye);text-transform:uppercase;letter-spacing:.06em}
+.res td{padding:6px 3px;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums;word-break:break-word}
+.res th:nth-child(n+2),.res td:nth-child(n+2){width:17%;text-align:right}
+.res th:nth-child(4),.res td:nth-child(4){width:15%}
+.res .nm{font-weight:700}
+.pos{color:var(--bad);font-weight:800}.neg{color:var(--good);font-weight:800}.zero{color:var(--mut);font-weight:800}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.sum div{background:var(--card);border-left:6px solid var(--ye);padding:8px 10px}
+.sum b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.hist{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;background:var(--card);margin:6px 0;padding:10px 12px;min-height:56px;font-weight:600;text-transform:none;letter-spacing:0;font-size:16px}
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dlg{background:var(--bg);color:var(--fg);padding:16px;width:100%;max-width:420px;max-height:90vh;overflow:auto;border:3px solid var(--ye);border-radius:2px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ye);color:#000;padding:10px 16px;font-weight:800;z-index:20}
+.paused{color:var(--mut)}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<script>
+/*PURE*/
+const TYPES={
+ run:{label:'Hardlopen',color:'#1d4ed8'},
+ skierg:{label:'SkiErg',color:'#0e7490'},
+ sled_push:{label:'Sled Push',color:'#6d28d9'},
+ sled_pull:{label:'Sled Pull',color:'#86198f'},
+ burpee_broad_jump:{label:'Burpee Broad Jump',color:'#b91c1c'},
+ row:{label:'Roeien',color:'#0f766e'},
+ farmers_carry:{label:'Farmers Carry',color:'#92400e'},
+ sandbag_lunges:{label:'Sandbag Lunges',color:'#3f6212'},
+ wall_balls:{label:'Wall Balls',color:'#be185d'},
+ rust:{label:'Rust',color:'#475569'},
+ warmup:{label:'Warming-up',color:'#c2410c'},
+ cooldown:{label:'Cooling-down',color:'#0369a1'},
+ kracht:{label:'Kracht',color:'#1f2937'},
+ overig:{label:'Overig',color:'#374151'}
+};
+const KEYS=['type','naam','ronde','afstand','reps','gewicht','snelheid','helling','doel','rust','notitie'];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function parseTime(s){
+ s=String(s).trim();
+ if(/^\d+$/.test(s))return parseInt(s,10);
+ const m=s.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/);
+ if(!m)return null;
+ if(m[3]!=null){const a=+m[2],b=+m[3];if(a>59||b>59)return null;return (+m[1])*3600+a*60+b}
+ const sec=+m[2];if(sec>59)return null;return (+m[1])*60+sec;
+}
+function fmtSec(t){
+ t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;
+ return h?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):m+':'+String(s).padStart(2,'0');
+}
+const fmtMs=ms=>fmtSec(ms/1000);
+function fmtDiff(sec){return (sec>0?'+':sec<0?'−':'±')+fmtSec(Math.abs(sec))}
+function speedStr(v){return v.toFixed(1).replace('.',',')+' km/u'}
+function paceStr(v){return fmtSec(Math.round(3600/v))+' /km'}
+function parseTraining(text){
+ const t={title:'',date:'',rules:[],steps:[],errors:[]};
+ String(text).replace(/\r\n?/g,'\n').split('\n').forEach((raw,i)=>{
+  const ln=i+1,line=raw.replace(/[ ﻿]/g,' ').trim();
+  if(!line)return;
+  if(line[0]==='#'){
+   const m=line.match(/^#\s*([A-Za-z]+)\s*:\s*(.*)$/);
+   const key=m?m[1].toUpperCase():'';
+   if(!m||!['TITEL','DATUM','REGEL'].includes(key)){t.errors.push({line:ln,raw:line,msg:'Onbekende kopregel (verwacht # TITEL:, # DATUM: of # REGEL:)'});return}
+   const v=m[2].trim();
+   if(!v)return;
+   if(key==='TITEL')t.title=v;
+   else if(key==='DATUM'){
+    const d=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const ok=d&&new Date(+d[1],+d[2]-1,+d[3]).getDate()===+d[3]&&+d[2]>=1&&+d[2]<=12;
+    if(!ok)t.errors.push({line:ln,raw:line,msg:'Datum moet JJJJ-MM-DD zijn'});else t.date=v;
+   }else t.rules.push(v);
+   return;
+  }
+  const f={},errs=[];let last=null;
+  line.split(';').forEach(seg=>{
+   const s=seg.trim();if(!s)return;
+   const eq=s.indexOf('=');
+   if(eq<1){
+    if(last==='notitie'||last==='naam')f[last]+='; '+s;
+    else errs.push('"'+s+'" is geen sleutel=waarde');
+    return;
+   }
+   const k=s.slice(0,eq).trim().toLowerCase(),v=s.slice(eq+1).trim();
+   if(!KEYS.includes(k)){errs.push('onbekende sleutel "'+k+'"');last=null;return}
+   if(k in f)errs.push('sleutel "'+k+'" staat dubbel');
+   f[k]=v;last=k;
+  });
+  const ty=(f.type||'').toLowerCase().replace(/[\s-]+/g,'_');
+  if(!f.type)errs.push('type ontbreekt');
+  else if(!TYPES[ty])errs.push('onbekend type "'+f.type+'"');
+  const step={type:ty,line:ln};
+  ['naam','ronde','afstand','reps','gewicht','helling','notitie'].forEach(k=>{step[k]=f[k]||''});
+  step.doel=null;step.rust=null;step.snelheid=null;
+  ['doel','rust'].forEach(k=>{
+   if(f[k]){const p=parseTime(f[k]);if(p==null)errs.push(k+' "'+f[k]+'" is geen m:ss of seconden');else step[k]=p}
+  });
+  if(f.snelheid){
+   const n=parseFloat(f.snelheid.replace(/\s*km\s*\/?\s*u?$/i,'').replace(',','.'));
+   if(!isFinite(n)||n<=0||!/^\d+([.,]\d+)?\s*(km\s*\/?\s*u?)?$/i.test(f.snelheid))errs.push('snelheid "'+f.snelheid+'" is geen getal (km/u)');else step.snelheid=n;
+  }
+  if(errs.length)t.errors.push({line:ln,raw:line,msg:errs.join('; ')});
+  else t.steps.push(step);
+ });
+ return t;
+}
+function stepName(s){return s.naam||TYPES[s.type].label}
+function stepDetails(s){
+ const a=[];
+ if(s.afstand)a.push(s.afstand);
+ if(s.reps)a.push(/^\d+$/.test(s.reps)?s.reps+' reps':s.reps);
+ if(s.gewicht)a.push(s.gewicht);
+ if(s.snelheid!=null)a.push(speedStr(s.snelheid)+' · '+paceStr(s.snelheid));
+ if(s.helling)a.push('helling '+s.helling);
+ return a;
+}
+function totalsOf(training,results){
+ let d=0,a=0,n=0;
+ results.forEach(r=>{const st=training.steps[r.i];if(r.status==='done'&&st&&st.doel!=null){d+=st.doel;a+=Math.round(r.actual/1000);n++}});
+ return {d,a,n};
+}
+function resultText(snap){
+ const t=snap.training,T=totalsOf(t,snap.results),L=[];
+ L.push('HYROX – '+(t.title||'Training')+(t.date?' ('+t.date+')':''));
+ t.rules.forEach(r=>L.push('Regel: '+r));
+ L.push('Totaal doel: '+fmtSec(T.d)+' | werkelijk: '+fmtSec(T.a)+' | verschil: '+fmtDiff(T.a-T.d)+' (over '+T.n+' stappen met doel)');
+ L.push('Totale tijd incl. rust: '+fmtMs(snap.totalMs));
+ L.push('');
+ snap.results.forEach(r=>{
+  const s=t.steps[r.i],p=[(r.i+1)+'. '+stepName(s)+(s.ronde?' (ronde '+s.ronde+')':'')];
+  p.push('doel '+(s.doel!=null?fmtSec(s.doel):'–'));
+  if(r.status==='skipped')p.push('overgeslagen');
+  else{const a=Math.round(r.actual/1000);p.push('werkelijk '+fmtSec(a));if(s.doel!=null)p.push(fmtDiff(a-s.doel))}
+  if(r.hr)p.push('hartslag piek '+r.hr);
+  if(r.note)p.push('notitie: '+r.note);
+  L.push(p.join(' — '));
+ });
+ return L.join('\n');
+}
+function csvCell(v,isText){
+ let s=v==null?'':String(v);
+ if(isText&&/^[=+\-@\t\r]/.test(s))s="'"+s;
+ return '"'+s.replace(/"/g,'""')+'"';
+}
+function resultCsv(snap){
+ const t=snap.training,rows=[['nr','type','naam','ronde','afstand','reps','gewicht','snelheid_kmu','helling','doel_s','werkelijk_s','verschil_s','status','instructie','mijn_notitie','hartslag_piek']];
+ snap.results.forEach(r=>{
+  const s=t.steps[r.i],a=r.status==='done'?Math.round(r.actual/1000):'';
+  rows.push([r.i+1,s.type,stepName(s),s.ronde,s.afstand,s.reps,s.gewicht,s.snelheid==null?'':s.snelheid,s.helling,s.doel==null?'':s.doel,a,(a!==''&&s.doel!=null)?a-s.doel:'',r.status==='done'?'klaar':'overgeslagen',s.notitie,r.note||'',r.hr||'']);
+ });
+ const txt=new Set([1,2,3,4,5,6,8,13,14,15]);
+ return rows.map((row,ri)=>row.map((c,ci)=>csvCell(c,ri>0&&txt.has(ci))).join(';')).join('\r\n');
+}
+const WISSEL=10;
+function plannedOf(t){
+ let work=0,rest=0,missing=0;
+ t.steps.forEach((s,i)=>{if(s.doel!=null)work+=s.doel;else missing++;if(s.rust&&i<t.steps.length-1)rest+=s.rust});
+ const wissel=t.steps.length*WISSEL;
+ return {work,rest,wissel,total:work+rest+wissel,missing};
+}
+/*ENDPURE*/
+
+const ICONS={
+ run:'<circle cx="38" cy="12" r="4.5" fill="currentColor"/><path d="M36 19L30 36M35 23L45 28M35 23L25 25L20 31M30 36L40 43L38 55M30 36L22 46L11 48"/>',
+ skierg:'<circle cx="26" cy="14" r="4.5" fill="currentColor"/><path d="M26 20V40M26 24L36 30M26 40L22 56M26 40L32 56M50 6V56M42 56H58M50 10L36 30"/><circle cx="50" cy="46" r="5"/>',
+ sled_push:'<circle cx="34" cy="16" r="4.5" fill="currentColor"/><path d="M32 22L20 40M31 26L45 34M20 40L28 50L22 58M20 40L9 52M42 50H62"/><rect x="46" y="31" width="12" height="15"/>',
+ sled_pull:'<circle cx="46" cy="14" r="4.5" fill="currentColor"/><path d="M44 20L50 40M45 25L36 30L19 38M50 40L44 56M50 40L59 54M4 52H26"/><rect x="6" y="37" width="14" height="13"/>',
+ burpee_broad_jump:'<circle cx="13" cy="34" r="4.5" fill="currentColor"/><path d="M19 38L50 46L59 51M26 40V54M12 20Q32 2 52 20M52 20L44 18M52 20L50 28"/>',
+ row:'<circle cx="19" cy="20" r="4.5" fill="currentColor"/><path d="M22 26L28 44L40 38L46 48M24 32L36 35L50 40M4 52H60"/><circle cx="54" cy="40" r="6"/>',
+ farmers_carry:'<circle cx="32" cy="10" r="4.5" fill="currentColor"/><path d="M32 16V38M32 20L22 28V38M32 20L42 28V38M32 38L28 58M32 38L36 58"/><rect x="16" y="38" width="12" height="11"/><rect x="36" y="38" width="12" height="11"/>',
+ sandbag_lunges:'<circle cx="30" cy="12" r="4.5" fill="currentColor"/><path d="M30 18V36M30 36L42 40V56M30 36L18 48L8 53"/><rect x="18" y="17" width="24" height="8" rx="4"/>',
+ wall_balls:'<circle cx="27" cy="24" r="4.5" fill="currentColor"/><path d="M27 30L24 43L38 47L33 59M28 32L36 22M6 4H58"/><circle cx="42" cy="15" r="6.5"/>',
+ rust:'<path d="M23 14V50M41 14V50" stroke-width="7"/>',
+ warmup:'<circle cx="32" cy="11" r="4.5" fill="currentColor"/><path d="M32 17V38M32 22L16 12M32 22L48 12M32 38L20 58M32 38L44 58"/>',
+ cooldown:'<circle cx="25" cy="14" r="4.5" fill="currentColor"/><path d="M28 21L32 42M29 25Q46 18 42 4M32 42L26 58M32 42L38 58"/>',
+ kracht:'<path d="M6 32H58"/><rect x="13" y="18" width="7" height="28"/><rect x="44" y="18" width="7" height="28"/><rect x="6" y="25" width="5" height="14"/><rect x="53" y="25" width="5" height="14"/>',
+ overig:'<circle cx="32" cy="32" r="22"/><circle cx="21" cy="32" r="2.5" fill="currentColor"/><circle cx="32" cy="32" r="2.5" fill="currentColor"/><circle cx="43" cy="32" r="2.5" fill="currentColor"/>'
+};
+function ic(type,cls){return '<svg class="'+(cls||'ico')+'" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[type]||ICONS.overig)+'</svg>'}
+
+const EXAMPLE=`# TITEL: Stations + compromised
+# DATUM: 2026-11-19
+# REGEL: Piek hartslag max 165 aan eind van een km
+type=warmup; naam=Warming-up; doel=12:00; notitie=2x10 glute bridges, 10 leg swings, 5 min 7,8 km/u + 2 versnellingen
+type=sled_push; ronde=1; afstand=30 m; gewicht=120 kg totaal (85 kg schijven); doel=1:15
+type=run; ronde=1; afstand=1 km; snelheid=11.0; helling=1%; doel=5:27; rust=2:00
+type=wall_balls; ronde=1; reps=25; gewicht=6 kg; doel=1:30
+type=cooldown; naam=Uitlopen; doel=5:00`;
+
+const KEY='hyroxTimer.v1',TKEY='hyroxTimer.theme';
+const fresh=()=>({training:null,phase:'idle',idx:0,stepStart:0,trainStart:0,pausedAt:0,restEnd:0,restDur:0,readyStart:0,buzzed:false,results:[],draft:{note:'',hr:''},totalMs:0,finishedAt:0});
+let S=fresh(),history=[],ui={view:null,histId:null,err:null,paste:''},lastKey='',wl=null;
+const $=id=>document.getElementById(id);
+const vib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify({S,history}))}catch(e){}}
+function load(){
+ try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d&&d.S){S=Object.assign(fresh(),d.S);history=Array.isArray(d.history)?d.history:[]}}catch(e){}
+ try{const th=localStorage.getItem(TKEY);if(th)document.documentElement.dataset.theme=th}catch(e){}
+}
+async function lock(){try{if('wakeLock' in navigator&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}}catch(e){wl=null}}
+function unlock(){try{if(wl){wl.release();wl=null}}catch(e){}}
+const active=()=>S.training&&(S.phase==='run'||S.phase==='rest');
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(active())lock();tick()}});
+
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+function dialog(html){
+ const o=document.createElement('div');o.className='ovl';o.innerHTML='<div class="dlg">'+html+'</div>';document.body.appendChild(o);return o;
+}
+function confirmBox(msg,ok){
+ return new Promise(res=>{
+  const o=dialog('<p style="font-size:18px;font-weight:700;margin-top:0">'+esc(msg)+'</p><div class="row2"><button data-r="0">Annuleer</button><button class="pri" data-r="1">'+esc(ok||'Ja')+'</button></div>');
+  o.addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(b){o.remove();res(b.dataset.r==='1')}});
+ });
+}
+function showText(title,text){
+ const o=dialog('<h2 style="margin-top:0">'+esc(title)+'</h2><textarea readonly id="cpy" style="min-height:200px">'+esc(text)+'</textarea><div class="row2"><button data-r="copy">Kopieer</button><button class="pri" data-r="x">Sluit</button></div><p class="hint">Kopiëren lukt niet automatisch? Houd de tekst ingedrukt, kies alles selecteren en kopieer.</p>');
+ const ta=o.querySelector('textarea');setTimeout(()=>{ta.focus();ta.select()},50);
+ o.addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;
+  if(b.dataset.r==='x')o.remove();
+  else{ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}toast(ok?'Gekopieerd':'Selecteer en kopieer handmatig')}
+ });
+}
+async function copyText(text,title){
+ try{await navigator.clipboard.writeText(text);toast('Gekopieerd')}catch(e){showText(title||'Resultaat',text)}
+}
+async function dlCsv(snap){
+ const csv='﻿'+resultCsv(snap),t=snap.training;
+ const name='hyrox_'+(t.date||new Date(snap.finishedAt).toISOString().slice(0,10))+'_'+((t.title||'training').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'training')+'.csv';
+ let dl=null;
+ try{dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null}catch(e){}
+ if(dl){
+  for(const data of [csv,new Blob([csv],{type:'text/csv'})]){
+   try{await dl.save({filename:name,data});toast('CSV opgeslagen');return}catch(e){
+    if(/declin|cancel|reject|denied|geweigerd/i.test(String(e&&(e.code||e.message||e))))return;
+   }
+  }
+ }
+ showText('CSV – kopieer en plak in een .csv-bestand',csv.replace(/^﻿/,''));
+}
+
+/* ---------- acties ---------- */
+function loadText(text){
+ const t=parseTraining(text);
+ if(!t.steps.length){ui.err=t;ui.paste=text;render();return}
+ ui.err=null;ui.paste='';S=Object.assign(fresh(),{training:t});save();render();
+}
+function startTraining(){
+ const now=Date.now();S.phase='run';S.idx=0;S.stepStart=now;S.trainStart=now;S.pausedAt=0;S.results=[];S.draft={note:'',hr:''};
+ lock();vib(60);save();render();
+}
+function recordStep(status){
+ if(S.pausedAt)return;
+ const now=Date.now(),step=S.training.steps[S.idx];
+ if(status==='done'&&now-S.stepStart<700)return;
+ S.results.push({i:S.idx,actual:status==='done'?now-S.stepStart:null,status,note:S.draft.note.trim(),hr:S.draft.hr.trim()});
+ S.draft={note:'',hr:''};
+ vib(status==='done'?120:40);
+ if(status==='done'&&S.idx<S.training.steps.length-1){
+  S.phase='rest';S.readyStart=now;S.restDur=step.rust>0?step.rust:0;S.restEnd=step.rust>0?now+step.rust*1000:0;S.buzzed=false;
+ }else advance(now);
+ save();render();
+}
+function advance(now){
+ S.idx++;
+ if(S.idx>=S.training.steps.length){S.idx=S.training.steps.length-1;finish(now)}
+ else{S.phase='run';S.stepStart=now}
+}
+function finish(now){
+ S.phase='done';S.finishedAt=now;S.totalMs=now-S.trainStart;S.pausedAt=0;
+ history=history.filter(h=>h.id!==now);
+ history.unshift({id:now,title:S.training.title,date:S.training.date,finishedAt:now,totalMs:S.totalMs,training:S.training,results:S.results});
+ history=history.slice(0,10);unlock();
+}
+function startNext(){
+ const now=Date.now();
+ if(S.pausedAt||now-(S.readyStart||0)<700)return;
+ S.idx++;S.phase='run';S.stepStart=now;vib(60);save();render();
+}
+function togglePause(){
+ const now=Date.now();
+ if(S.pausedAt){const d=now-S.pausedAt;S.stepStart+=d;S.trainStart+=d;S.restEnd+=d;S.readyStart+=d;S.pausedAt=0;lock()}
+ else S.pausedAt=now;
+ save();render();
+}
+function undo(){
+ if(!S.results.length)return;
+ const now=Date.now();
+ if(S.pausedAt){S.trainStart+=now-S.pausedAt;S.pausedAt=0}
+ if(S.phase==='done'){S.trainStart+=now-S.finishedAt;history=history.filter(h=>h.id!==S.finishedAt);lock()}
+ const r=S.results.pop();
+ S.idx=r.i;S.phase='run';S.stepStart=now;S.draft={note:r.note||'',hr:r.hr||''};
+ vib(40);save();render();
+}
+async function endNow(){
+ if(!await confirmBox('Training nu beëindigen? Alleen de vastgelegde stappen komen in het overzicht.','Beëindig'))return;
+ finish(S.pausedAt||Date.now());save();render();
+}
+async function newTraining(){
+ if(!await confirmBox('Nieuwe training starten? De huidige training en resultaten worden gewist (afgeronde trainingen blijven in de geschiedenis).','Wis en ga door'))return;
+ unlock();S=fresh();ui={view:null,histId:null,err:null,paste:''};save();render();
+}
+
+/* ---------- views ---------- */
+function bigLines(s){
+ let h='';
+ const main=[];if(s.afstand)main.push(esc(s.afstand));if(s.reps)main.push(esc(/^\d+$/.test(s.reps)?s.reps+' reps':s.reps));
+ if(main.length)h+='<div class="l1">'+main.join(' · ')+'</div>';
+ if(s.gewicht)h+='<div class="l2"><span class="k">Gewicht</span>'+esc(s.gewicht)+'</div>';
+ if(s.snelheid!=null)h+='<div class="l2"><span class="k">Snelheid · tempo</span>'+esc(speedStr(s.snelheid))+' <span style="font-weight:700">· '+esc(paceStr(s.snelheid))+'</span></div>';
+ if(s.helling)h+='<div class="l3"><span class="k">Helling</span>'+esc(s.helling)+'</div>';
+ if(s.notitie)h+='<div class="note">'+esc(s.notitie)+'</div>';
+ return h;
+}
+const themeBtn='<button class="thm" data-act="theme" aria-label="Thema wisselen">Thema</button>';
+function homeHtml(){
+ let h='<div class="top"><div class="tt" style="font-size:24px">HYROX Timer</div>'+themeBtn+'</div>';
+ h+='<h2>Training laden</h2><textarea id="paste" placeholder="Plak hier je training (# TITEL:, # DATUM:, # REGEL: en één stap per regel)">'+esc(ui.paste)+'</textarea>';
+ h+='<div class="row2"><button class="pri" data-act="load">Training laden</button><label class="btn">Kies .txt-bestand<input type="file" id="file" accept=".txt,text/plain" style="display:none"></label></div>';
+ h+='<button data-act="example" style="width:100%;min-height:44px">Voorbeeldtraining invullen</button>';
+ if(ui.err){
+  h+='<div class="err"><b>'+(ui.err.steps.length?'':'Geen bruikbare stappen gevonden. ')+'Niet gelezen regels:</b>'+ui.err.errors.map(e=>'<div style="margin-top:6px">Regel '+e.line+': '+esc(e.msg)+'<code>'+esc(e.raw)+'</code></div>').join('')+(ui.err.errors.length?'':'<div>Het bestand bevat geen stappen.</div>')+'</div>';
+ }
+ h+='<h2>Laatste trainingen</h2>';
+ if(!history.length)h+='<p class="hint">Nog geen afgeronde trainingen.</p>';
+ history.forEach(x=>{
+  const T=totalsOf(x.training,x.results);
+  h+='<button class="hist" data-act="hist" data-id="'+x.id+'"><span>'+esc(x.title||'Training')+'<br><span class="sub">'+esc(dateNl(x))+'</span></span><span style="text-align:right">'+fmtMs(x.totalMs)+'<br><span class="'+(T.a>T.d?'pos':T.a<T.d?'neg':'zero')+'">'+(T.n?fmtDiff(T.a-T.d):'')+'</span></span></button>';
+ });
+ h+='<p class="hint">Alles staat alleen in de browser van deze telefoon. Kopieer het resultaat na afloop voor de zekerheid.</p>';
+ return h;
+}
+function dateNl(x){
+ const m=(x.date||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+ const d=m?new Date(+m[1],+m[2]-1,+m[3]):new Date(x.finishedAt);
+ try{return d.toLocaleDateString('nl-NL',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}catch(e){return x.date||''}
+}
+function overviewList(t){
+ return '<ul class="ov">'+t.steps.map((s,i)=>{
+  const m=TYPES[s.type],d=stepDetails(s);
+  if(s.doel!=null)d.push('doel '+fmtSec(s.doel));
+  if(s.rust)d.push('rust '+fmtSec(s.rust));
+  return '<li style="--c:'+m.color+'"><span class="ic">'+ic(s.type)+'</span><div><b>'+(i+1)+'. '+esc(stepName(s))+(s.ronde?' <span class="sub">(ronde '+esc(s.ronde)+')</span>':'')+'</b><div class="sub">'+esc(d.join(' · '))+'</div>'+(s.notitie?'<div class="sub">Notitie: '+esc(s.notitie)+'</div>':'')+'</div></li>';
+ }).join('')+'</ul>';
+}
+function rulesHtml(t){return t.rules.length?'<div class="rules">'+t.rules.map(r=>'<div>'+esc(r)+'</div>').join('')+'</div>':''}
+function previewHtml(){
+ const t=S.training;
+ let h='<div class="top"><div class="tt">'+esc(t.title||'Training')+'</div>'+themeBtn+'</div><div class="sub2">'+esc(dateNl({date:t.date,finishedAt:Date.now()}))+' · '+t.steps.length+' stappen — controleer en start</div>'+rulesHtml(t);
+ const P=plannedOf(t);
+ h+='<div class="plan"><div><div class="cap">Geplande totaaltijd</div><b>'+fmtSec(P.total)+'</b></div><div class="sub">training '+fmtSec(P.work)+'<br>rust '+fmtSec(P.rest)+'<br>wissel '+fmtSec(P.wissel)+' ('+t.steps.length+' x '+fmtSec(WISSEL)+')'+(P.missing?'<br>'+P.missing+' stap'+(P.missing>1?'pen':'')+' zonder doel':'')+'</div></div>';
+ if(t.errors.length)h+='<div class="err"><b>Deze regels zijn niet gelezen en worden niet meegenomen:</b>'+t.errors.map(e=>'<div style="margin-top:6px">Regel '+e.line+': '+esc(e.msg)+'<code>'+esc(e.raw)+'</code></div>').join('')+'</div>';
+ h+=overviewList(t);
+ h+='<button class="klaar" style="min-height:90px;font-size:34px;margin-top:10px" data-act="start">Start'+(t.errors.length?' (zonder foute regels)':'')+'</button>';
+ h+='<button data-act="new" style="width:100%;margin-top:8px">Andere training laden</button>';
+ return h;
+}
+function trainHtml(){
+ const t=S.training,st=t.steps,i=S.idx,step=st[i],n=st.length,m=TYPES[step.type],resting=S.phase==='rest',paused=!!S.pausedAt;
+ const next=st[i+1];
+ let h='<div class="train"><div class="top"><div class="tt">'+esc(t.title||'Training')+'</div><div class="tot"><span id="tTot">0:00</span>'+(plannedOf(t).total?' <small>/ '+fmtSec(plannedOf(t).total)+'</small>':'')+'</div>'+themeBtn+'</div>';
+ h+='<div class="sub2">'+(resting?'Stap '+(i+1)+' van '+n+' gestopt · wissel naar volgende':'Stap '+(i+1)+' van '+n+(step.ronde?' · Ronde '+esc(step.ronde):''))+(paused?' · PAUZE':'')+'</div>';
+ if(!resting){
+  h+='<div class="card" style="--c:'+m.color+'"><div class="chead"><span class="ic">'+ic(step.type)+'</span><div><div class="lab">'+esc(m.label)+'</div><div class="nm">'+esc(stepName(step))+'</div></div></div><div class="cbody">'+(bigLines(step)||'<div class="l3 paused">Geen details</div>')+'</div></div>';
+  h+='<div id="tblk" class="tblk"><div><div class="cap">'+(paused?'PAUZE':'TIJD')+'</div><div id="tTime" class="big">0:00</div></div><div><div class="cap" style="text-align:right">DOEL</div><div class="big2">'+(step.doel!=null?fmtSec(step.doel):'–')+'</div></div></div><div class="bar"><i id="tBar"></i></div>';
+  h+='<div class="next">Volgende: '+(next?'<b>'+ic(next.type,'ico-sm')+esc(stepName(next))+'</b> '+esc(stepDetails(next).join(' · ')):'<b>einde training</b>')+(step.rust>0&&next?' · eerst rust '+fmtSec(step.rust):'')+'</div>';
+ }else{
+  h+='<div class="card"><div class="chead"><span class="ic">'+ic(step.type)+'</span><div><div class="lab">Vastgelegd</div><div class="nm">'+esc(stepName(step))+'</div></div></div><div class="cbody"><div class="cap" id="rCap">'+(S.restDur>0?'RUST OVER':'WISSELTIJD')+'</div><div id="rTime" class="big">0:00</div>'+(S.restDur>0?'<div class="sub" style="font-weight:800;margin-top:4px">Wisseltijd <span id="wTime">0:00</span> / '+fmtSec(WISSEL)+'</div>':'<div class="sub" style="font-weight:800;margin-top:4px">Streef: '+fmtSec(WISSEL)+'</div>')+'</div></div><div class="bar"><i id="tBar"></i></div>';
+  const nm=TYPES[next.type];
+  h+='<div class="card" style="margin-top:10px"><div class="chead"><span class="ic">'+ic(next.type)+'</span><div><div class="lab">Hierna · druk op start</div><div class="nm">'+esc(stepName(next))+'</div></div></div><div class="cbody">'+bigLines(next)+'</div></div>';
+ }
+ h+='<div class="grow"></div>';
+ h+=resting?'<button class="klaar" data-act="startnext"'+(paused?' disabled':'')+'>START</button>':'<button class="klaar" data-act="done"'+(paused?' disabled':'')+'>STOP</button>';
+ h+='<div class="row3"><button data-act="pause">'+(paused?'Hervat':'Pauze')+'</button><button data-act="undo"'+(S.results.length?'':' disabled')+'>Vorige</button>'+(resting?'<button data-act="endnow">Beëindig</button>':'<button data-act="skip"'+(paused?' disabled':'')+'>Overslaan</button>')+'</div>';
+ if(!resting)h+='<details'+(S.draft.note||S.draft.hr?' open':'')+'><summary>Notitie / hartslag-piek</summary><input type="text" id="dNote" placeholder="bv. gestopt bij 25 wall balls" value="'+esc(S.draft.note)+'"><input type="number" inputmode="numeric" id="dHr" placeholder="Hartslag-piek (bpm)" value="'+esc(S.draft.hr)+'"></details>';
+ if(!resting)h+='<button data-act="endnow" style="width:100%;min-height:40px;margin-top:8px">Training beëindigen</button>';
+ return h+'</div>';
+}
+function resultsHtml(snap){
+ const t=snap.training,T=totalsOf(t,snap.results);
+ let h='<div class="sum"><div><span class="cap">DOEL (stappen met doel)</span><b>'+fmtSec(T.d)+'</b></div><div><span class="cap">WERKELIJK</span><b>'+fmtSec(T.a)+'</b></div><div><span class="cap">VERSCHIL</span><b class="'+(T.a>T.d?'pos':T.a<T.d?'neg':'zero')+'">'+fmtDiff(T.a-T.d)+'</b></div><div><span class="cap">TOTALE TIJD incl. rust</span><b>'+fmtMs(snap.totalMs)+'</b></div></div>';
+ h+='<table class="res"><thead><tr><th>Stap</th><th>Doel</th><th>Werkelijk</th><th>+/−</th></tr></thead><tbody>';
+ snap.results.forEach(r=>{
+  const s=t.steps[r.i],m=TYPES[s.type],a=r.status==='done'?Math.round(r.actual/1000):null;
+  const diff=(a!=null&&s.doel!=null)?a-s.doel:null;
+  const extra=[];if(r.hr)extra.push('HF-piek '+r.hr);if(r.note)extra.push('Notitie: '+r.note);
+  h+='<tr><td><div class="nm">'+(r.i+1)+'. '+ic(s.type,'ico-sm')+esc(stepName(s))+'</div>'+(stepDetails(s).length?'<div class="sub">'+esc(stepDetails(s).join(' · '))+'</div>':'')+(extra.length?'<div class="sub">'+esc(extra.join(' · '))+'</div>':'')+'</td><td>'+(s.doel!=null?fmtSec(s.doel):'–')+'</td><td>'+(a!=null?'<b>'+fmtSec(a)+'</b>':'<span class="sub">overgeslagen</span>')+'</td><td class="'+(diff==null?'zero':diff>0?'pos':diff<0?'neg':'zero')+'">'+(diff==null?'–':fmtDiff(diff))+'</td></tr>';
+ });
+ return h+'</tbody></table>';
+}
+function doneHtml(){
+ const snap={training:S.training,results:S.results,totalMs:S.totalMs,finishedAt:S.finishedAt};
+ return '<div class="top"><div class="tt">'+esc(S.training.title||'Training')+'</div>'+themeBtn+'</div><div class="sub2">Klaar · '+esc(dateNl({date:S.training.date,finishedAt:S.finishedAt}))+'</div>'+rulesHtml(S.training)+resultsHtml(snap)+
+ '<div class="row2"><button class="pri" data-act="copy">Kopieer resultaat</button><button data-act="csv">Download CSV</button></div><div class="row2"><button data-act="undo"'+(S.results.length?'':' disabled')+'>Laatste ongedaan</button><button data-act="new">Nieuwe training</button></div>';
+}
+function histHtml(){
+ const x=history.find(h=>String(h.id)===String(ui.histId));
+ if(!x)return '<button data-act="back">Terug</button>';
+ return '<div class="top"><button data-act="back" class="thm">Terug</button><div class="tt">'+esc(x.title||'Training')+'</div>'+themeBtn+'</div><div class="sub2">'+esc(dateNl(x))+'</div>'+resultsHtml(x)+'<div class="row2"><button class="pri" data-act="copy">Kopieer resultaat</button><button data-act="csv">Download CSV</button></div>';
+}
+function render(){
+ const app=$('app');let h,key;
+ if(ui.view==='hist'){h=histHtml();key='hist'+ui.histId}
+ else if(!S.training){h=homeHtml();key='home'}
+ else if(S.phase==='idle'){h=previewHtml();key='prev'}
+ else if(S.phase==='done'){h=doneHtml();key='done'}
+ else{h=trainHtml();key='t'+S.phase+S.idx}
+ app.innerHTML=h;
+ if(key!==lastKey){window.scrollTo(0,0);lastKey=key}
+ tick();
+}
+function setText(id,t){const e=$(id);if(e&&e.textContent!==t)e.textContent=t}
+function tick(){
+ if(!S.training||(S.phase!=='run'&&S.phase!=='rest'))return;
+ const ref=S.pausedAt||Date.now();
+ setText('tTot',fmtMs(ref-S.trainStart));
+ if(S.phase==='run'){
+  const step=S.training.steps[S.idx],el=ref-S.stepStart;
+  setText('tTime',fmtMs(el));
+  const b=$('tblk');
+  if(b&&step.doel!=null){
+   const over=el/1000-step.doel,cls=over>Math.max(10,step.doel*.1)?'bad':over>0?'warn':'';
+   const want='tblk '+cls;if(b.className!==want.trim())b.className=want.trim();
+   const bar=$('tBar');if(bar)bar.style.width=Math.min(100,el/10/step.doel)+'%';
+  }
+ }else{
+  const base=S.readyStart||(S.restEnd-S.restDur*1000),wis=ref-base;
+  if(S.restDur>0){
+   const rem=S.restEnd-ref;
+   if(rem<=0&&!S.buzzed&&!S.pausedAt){S.buzzed=true;vib([300,120,300]);save()}
+   setText('rTime',fmtSec(Math.ceil(Math.max(0,rem)/1000)));setText('rCap',rem>0?'RUST OVER':'RUST KLAAR');setText('wTime',fmtMs(wis));
+   const bar=$('tBar');if(bar)bar.style.width=Math.min(100,100-rem/10/S.restDur)+'%';
+  }else{
+   setText('rTime',fmtMs(wis));
+   const bar=$('tBar');if(bar)bar.style.width=Math.min(100,wis/10/WISSEL)+'%';
+  }
+ }
+}
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const a=b.dataset.act;
+ if(a==='theme'){const n=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=n;try{localStorage.setItem(TKEY,n)}catch(_){}}
+ else if(a==='load'){const v=($('paste')||{}).value||'';if(!v.trim()){ui.err={steps:[],errors:[],line:0};render();return}loadText(v)}
+ else if(a==='example'){ui.paste=EXAMPLE;ui.err=null;render()}
+ else if(a==='start')startTraining();
+ else if(a==='done')recordStep('done');
+ else if(a==='skip')recordStep('skipped');
+ else if(a==='startnext')startNext();
+ else if(a==='pause')togglePause();
+ else if(a==='undo')undo();
+ else if(a==='endnow')endNow();
+ else if(a==='new')newTraining();
+ else if(a==='hist'){ui.view='hist';ui.histId=b.dataset.id;render()}
+ else if(a==='back'){ui.view=null;render()}
+ else if(a==='copy'){const snap=ui.view==='hist'?history.find(h=>String(h.id)===String(ui.histId)):{training:S.training,results:S.results,totalMs:S.totalMs,finishedAt:S.finishedAt};if(snap)copyText(resultText(snap),'Resultaat')}
+ else if(a==='csv'){const snap=ui.view==='hist'?history.find(h=>String(h.id)===String(ui.histId)):{training:S.training,results:S.results,totalMs:S.totalMs,finishedAt:S.finishedAt};if(snap)dlCsv(snap)}
+});
+document.addEventListener('input',e=>{
+ const id=e.target.id;
+ if(id==='dNote'){S.draft.note=e.target.value;save()}
+ else if(id==='dHr'){S.draft.hr=e.target.value;save()}
+ else if(id==='paste')ui.paste=e.target.value;
+});
+document.addEventListener('change',async e=>{
+ if(e.target.id!=='file')return;
+ const f=e.target.files&&e.target.files[0];if(!f)return;
+ try{const txt=await f.text();ui.paste=txt;loadText(txt)}catch(err){toast('Bestand lezen mislukt')}
+ e.target.value='';
+});
+
+try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+load();
+if(active())lock();
+render();
+setInterval(tick,250);
+</script>
+</body>
+</html>
